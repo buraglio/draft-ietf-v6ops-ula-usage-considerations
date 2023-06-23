@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+     which is available here: http://xml.resource.org. -->
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs), 
+     please see http://xml.resource.org/authoring/README.html. -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="3"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space 
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- keep one blank line between list items -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="info" docName="draft-ietf-v6ops-ula-usage-considerations-02"
+     ipr="trust200902">
+  <front>
+    <title abbrev="ULA Usage">Considerations For Using Unique Local
+    Addresses</title>
+
+    <author fullname="Bing Liu" initials="B." surname="Liu">
+      <organization>Huawei Technologies</organization>
+
+      <address>
+        <postal>
+          <street>Q14, Huawei Campus, No.156 Beiqing Road</street>
+
+          <city>Hai-Dian District, Beijing, 100095</city>
+
+          <country>P.R. China</country>
+        </postal>
+
+        <email>leo.liubing@huawei.com</email>
+      </address>
+    </author>
+
+    <author fullname="Sheng Jiang" initials="S." surname="Jiang">
+      <organization>Huawei Technologies</organization>
+
+      <address>
+        <postal>
+          <street>Q14, Huawei Campus, No.156 Beiqing Road</street>
+
+          <city>Hai-Dian District, Beijing, 100095</city>
+
+          <country>P.R. China</country>
+        </postal>
+
+        <email>jiangsheng@huawei.com</email>
+      </address>
+    </author>
+<author fullname="Nick Buraglio" initials="N." surname="Buraglio">
+      <organization>ForwardingPlane, LLC</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <city></city>
+
+          <country></country>
+        </postal>
+
+        <email>buraglio@forwardingplane.net</email>
+      </address>
+    </author>
+
+    <date day="13" month="March" year="2017"/>
+
+    <area>Operations and Management Area</area>
+
+    <workgroup>Internet Engineering Task Force</workgroup>
+
+    <abstract>
+      <t>This document provides considerations for using IPv6 Unique Local
+      Addresses (ULAs). Based on an analysis of different ULA usage scenarios,
+      this document identifies use cases where ULA addresses are helpful as
+      well as potential problems caused by using them.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section title="Introduction">
+      <t>Unique Local Addresses (ULA) is defined in <xref target="RFC4193"/>,
+      and it is an alternative to site-local address (deprecated in <xref
+      target="RFC3879"/>). ULAs have the following features:</t>
+
+      <t><list style="hanging">
+          <t hangText="-">Automatically Generated</t>
+
+          <t>ULA prefixes can be automatically generated using the algorithms
+          described in <xref target="RFC4193"/>. This feature allows automatic
+          prefix allocation. Thus one can get a network working immediately
+          without applying for prefix(es) from an RIR/LIR (Regional Internet
+          Registry/Local Internet Registry).</t>
+
+          <t hangText="-">Globally Unique</t>
+
+          <t hangText="">ULAs are defined as a global scope address space.
+          However, they are not intended to be used globally on the public
+          Internet; in contrast, they are mostly used locally, for example, in
+          isolated networks, internal networks, or VPNs.</t>
+
+          <t hangText="">ULAs are intended to have an extremely low
+          probability of collision. The randomization of 40 bits in a ULA
+          prefix is considered sufficient enough to ensure a high degree of
+          uniqueness (refer to <xref target="RFC4193"/> Section 3.2.3 for
+          details) and simplifies merging of networks by avoiding the need to
+          renumber overlapping IP address space. </t>
+
+          <t hangText="-">Provider Independent Address Space</t>
+
+          <t hangText="">ULAs can be used for internal communications even
+          without Internet connectivity. They need no registration, so they
+          can support on-demand usage and do not carry any RIR/LIR burden of
+          documentation or fees.</t>
+
+          <t hangText="-">Well Known Prefix</t>
+
+          <t hangText="">The prefixes of ULAs are well known thus they are
+          easily identified and filtered.</t>
+        </list>This document aims to introduce the usage of ULAs in various
+      scenarios, provide some operational considerations, and clarify the
+      advantages and disadvantages of the usage in each scenario. Thus, the
+      administrators could choose to use ULAs in a certain way that considered
+      benificial for them.</t>
+    </section>
+
+    <section title="Requirements Language">
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+      "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in <xref
+      target="RFC2119"/> when they appear in ALL CAPS. When these words are
+      not in ALL CAPS (such as "should" or "Should"), they have their usual
+      English meanings, and are not to be interpreted as <xref
+      target="RFC2119"/> key words.</t>
+    </section>
+
+    <section title="General Considerations For Using ULAs">
+      <section title="Do Not Treat ULA Equal to RFC1918">
+        <t>ULA and <xref target="RFC1918"/> are similar in some aspects. The
+        most obvious one is as described in Section 3.1.3 that ULA provides an
+        internal address independence capability in IPv6 that is similar to
+        how <xref target="RFC1918"/> is commonly used. ULA allows
+        administrators to configure the internal network of each platform the
+        same way it is configured in IPv4. Many organizations have security
+        policies and architectures based around the local-only routing of
+        <xref target="RFC1918"/> addresses and those policies may directly map
+        to ULA <xref target="RFC4864"/>.</t>
+
+        <t>But this does not mean that ULA is equal to an IPv6 version of
+        <xref target="RFC1918"/> deployment. <xref target="RFC1918"/> usually
+        combines with NAT/NAPT for global connectivity. But it is not
+        necessary to combine ULAs with any kind of NAT. Operators can use ULA
+        for local communications along with global addresses for global
+        communications (see <xref target="ULAPA"/>). This is a big advantage
+        brought by default support of multiple-addresses-per-interface feature
+        in IPv6. (People may still have a requirement for NAT with ULA, this
+        is discussed in <xref target="ULAonly"/>. But people also need to keep
+        in mind that ULA is not intentionally designed for this kind of use
+        case.)</t>
+
+        <t>Another important difference is the ability to merge two ULA
+        networks without renumbering (because of the uniqueness), which is a
+        big advantage over <xref target="RFC1918"/>.</t>
+      </section>
+
+      <section title="Using ULAs in a Limited Scope">
+        <t>A ULA is by definition a prefix that is never advertised outside a
+        given domain, and is used within that domain by agreement of those
+        networked by the domain.</t>
+
+        <t>So when using ULAs in a network, the administrators need to clearly
+        set the scope of the ULAs and configure ACLs on relevant border
+        routers to block them out of the scope. And if internal DNS is
+        enabled, the administrators might also need to use internal-only DNS
+        names for ULAs and might need to split the DNS so that the internal
+        DNS server includes records that are not presented in the external DNS
+        server.</t>
+      </section>
+    </section>
+
+    <section title="Analysis and Operational Considerations for Scenarios Using ULAs">
+      <section anchor="isolat" title="ULA-only in Isolated Networks">
+        <t>IP is used ubiquitously. Some networks like industrial control bus
+        (e.g. <xref target="RS-485"/>, <xref target="SCADA"/>, or even
+        non-networked digital interfaces like <xref target="MIL-STD-1397"/>
+        have begun to use IP. In these kinds of networks, the system may lack
+        the ability to communicate with the public networks.</t>
+
+        <t>As another example, there may be some networks in which the
+        equipment has the technical capability to connect to the Internet, but
+        is prohibited by administration. These networks may include data
+        center networks, separate financial networks, lab networks.
+        machine-to-machine (e.g. vehicle networks), sensor networks, or even
+        normal LANs, and can include very large numbers of addresses.</t>
+
+        <t>ULA is a straightforward way to assign the IP addresses in the
+        kinds of networks just described, with minimal administrative cost or
+        burden. Also, ULAs fit in multiple subnet scenarios, in which each
+        subnet has its own ULA prefix. For example, when assigning vehicles
+        with ULAs, it is then possible to separate in-vehicle embedded
+        networks into different subnets depending on real-time situation.</t>
+
+        <t>However, each isolated network has the possibility to be connected
+        in the future. Administrators need to consider the following before
+        deciding whether to use ULAs: <list style="symbols">
+            <t>If the network eventually connects to another isolated or
+            private network, the potential for address collision arises.
+            However, if the ULAs were generated in the standard way, this will
+            not be a big problem.</t>
+
+            <t>If the network eventually connects to the global Internet, then
+            the operator will need to add a new global prefix and ensure that
+            the address selection policy is properly set up on all
+            interfaces.</t>
+          </list></t>
+
+        <t>Operational considerations:<list style="symbols">
+            <t>Prefix generation: randomly generated according to the
+            algorithms defined in <xref target="RFC4193"/> or manually
+            assigned. Normally, automatic generation of the prefixes is
+            recommended, following <xref target="RFC4193"/>. If there are some
+            specific reasons that call for manual assignment, administrators
+            have to plan the prefixes carefully to avoid collision.</t>
+
+            <t>Prefix announcement: in some cases, networks might need to
+            announce prefixes to each other. For example, in vehicle networks
+            with infrastructure-less settings such as Vehicle-to-Vehicle (V2V)
+            communication, prior knowledge of the respective prefixes is
+            unlikely. Hence, a prefix announcement mechanism is needed to
+            enable inter-vehicle communications based on IP. As one
+            possibility, such announcements could rely on extensions to the
+            Router Advertisement message of the Neighbor Discovery Protocol
+            (e.g., <xref target="I-D.petrescu-autoconf-ra-based-routing"/> and
+            <xref target="I-D.jhlee-mext-mnpp"/>).</t>
+          </list></t>
+      </section>
+
+      <section anchor="ULAPA" title="ULA+PA in Connected Networks">
+        <t>Two classes of network might need to use ULA with PA (Provider
+        Aggregated) addresses:<list style="symbols">
+            <t>Home network. Home networks are normally assigned with one or
+            more globally routed PA prefixes to connect to the uplink of an
+            ISP. In addition, they may need internal routed networking even
+            when the ISP link is down. Then ULA is a proper tool to fit the
+            requirement. <xref target="RFC7084"/> requires the CPE to support
+            ULA. Note: ULAs provide more benefit for multiple-segment home
+            networks; for home networks containing only one segment,
+            link-local addresses are better alternatives.</t>
+
+            <t>Enterprise network. An enterprise network is usually a managed
+            network with one or more PA prefixes or with a PI prefix, all of
+            which are globally routed. The ULA can be used to improve internal
+            connectivity and make it more resilient, or to isolate certain
+            functions like OAM for servers.</t>
+          </list></t>
+
+        <t>Benefits of Using ULAs in this scenario:<list style="symbols">
+            <t>Separated local communication plane: for either home networks
+            or enterprise networks, the main purpose of using ULAs along with
+            PA addresses is to provide a logically local routing plane
+            separated from the global routing plane. The benefit is to ensure
+            stable and specific local communication regardless of the ISP
+            uplink failure. This benefit is especially meaningful for the home
+            network or for private OAM function in an enterprise.</t>
+
+            <t>Renumbering: in some special cases such as renumbering,
+            enterprise administrators may want to avoid the need to renumber
+            their internal-only, private nodes when they have to renumber the
+            PA addresses of the rest of the network because they are changing
+            ISPs, because the ISP has restructured its address allocations, or
+            for some other reason. In these situations, ULA is an effective
+            tool for addressing internal-only nodes. Even public nodes can
+            benefit from ULA for renumbering, on their internal interfaces.
+            When renumbering, as <xref target="RFC4192"/> suggests, old
+            prefixes continue to be valid until the new prefix(es) is(are)
+            stable. In the process of adding new prefix(es) and deprecating
+            old prefix(es), it is not easy to keep local communication
+            disentangled from global routing plane change. If we use ULAs for
+            local communication, the separated local routing plane can isolate
+            the effects of global routing change.</t>
+          </list></t>
+
+        <t>Drawbacks:<list style="symbols">
+            <t>Operational Complexity: there are some arguments that in
+            practice the use of ULA+PA creates additional operational
+            complexity. This is not a ULA-specific problem; the
+            multiple-addresses-per-interface is an important feature of IPv6
+            protocol. Nevertheless, running multiple prefixes needs more
+            operational consideration than running a single one.</t>
+          </list></t>
+
+        <t>Operational considerations:<list style="symbols">
+            <t>Default Routing: connectivity may be broken if ULAs are used as
+            default route. When using RIO (Route Information Option) in <xref
+            target="RFC4191"/>, specific routes can be added without a default
+            route, thus avoiding bad user experience due to timeouts on ICMPv6
+            redirects. This behavior was well documented in <xref
+            target="RFC7084"/> as rule ULA-5 "An IPv6 CE router MUST NOT
+            advertise itself as a default router with a Router Lifetime
+            greater than zero whenever all of its configured and delegated
+            prefixes are ULA prefixes." and along with rule L-3 "An IPv6 CE
+            router MUST advertise itself as a router for the delegated
+            prefix(es) (and ULA prefix if configured to provide ULA
+            addressing) using the "Route Information Option" specified in
+            Section 2.3 of <xref target="RFC4191"/>. This advertisement is
+            independent of having or not having IPv6 connectivity on the WAN
+            interface.". However, it needs to be noticed that current OSes
+            don't all support <xref target="RFC4191"/>.</t>
+
+            <t>SLAAC/DHCPv6 co-existing: Since SLAAC and DHCPv6 might be
+            enabled in one network simultaneously; the administrators need to
+            carefully plan how to assign ULA and PA prefixes in accordance
+            with the two mechanisms. The administrators need to know the
+            current issue of the SLAAC/DHCPv6 interaction (please refer to
+            <xref target="I-D.ietf-v6ops-dhcpv6-slaac-problem"/> for
+            details).</t>
+
+            <t>Address selection: As mentioned in <xref target="RFC5220"/>,
+            there is a possibility that the longest matching rule will not be
+            able to choose the correct address between ULAs and global unicast
+            addresses for correct intra-site and extra-site communication.
+            <xref target="RFC6724"/> claims that a site-specific policy entry
+            can be used to cause ULAs within a site to be preferred over
+            global addresses.</t>
+
+            <t>DNS relevant: if administrators choose not to do reverse DNS
+            delegation inside of their local control of ULA prefixes, a
+            significant amount of information about the ULA population may
+            leak to the outside world. Because reverse queries will be made
+            and naturally routed to the global reverse tree, so external
+            parties will be exposed to the existence of a population of ULA
+            addresses. <xref target="ULA-IN-WILD"/> provides more detailed
+            situations on this issue. Administrators may need a split DNS to
+            separate the queries from internal and external for ULA entries
+            and GUA entries.</t>
+          </list></t>
+      </section>
+
+      <section anchor="ULAonly" title="ULA-Only in Connected Networks">
+        <t>In theory, a site numbered with ULAs only can get connected via a
+        NPTv6<xref target="RFC6296"/> (which is an experimental specification
+        that provides a stateless one-to-one mapping between internal
+        addresses and external addresses) or application-layer proxy. This
+        approach could get provider independent addresses or get connected
+        from the isolated stage without applying to any RIRs/LIRs. This might
+        make small organizations saving time and address fee.</t>
+
+        <t>However, this approach breaks the end-to-end transparence. People
+        have suffered from the NAT/Proxy middle boxes so much in the IPv4 ear,
+        there is no reason to continue the suffering when IPv6 is available.
+        This document does not consider ULA+NPTv6/Proxy as a good choice for
+        normal cases. Rather, this document considers ULA+PA (Provider
+        Aggregated) as a better approach to connect to the global network when
+        ULAs are expected to be retained.</t>
+      </section>
+
+      <section title="Some Specific Use Cases">
+        <t>Along with the general scenarios, this section provides some
+        specific use cases that could benefit from using ULA.</t>
+
+        <section title="Special Routing">
+          <t>For various reasons the administrators may want to have private
+          routing be controlled and separated from other routing. For example,
+          in the business-to-business case described in <xref
+          target="I-D.baker-v6ops-b2b-private-routing"/>, two companies might
+          want to use direct connectivity that only connects stated machines,
+          such as a silicon foundry with client engineers that use it. A ULA
+          provides a simple way to assign prefixes that would be used in
+          accordance with an agreement between the parties.</t>
+        </section>
+
+        <section title="Used as Identifier">
+          <t>ULAs could be self-generated and easily grabbed from the standard
+          IPv6 stack. And ULAs don't need to be changed as the GUA prefixes
+          do. So they are very suitable to be used as identifiers by the up
+          layer applications. And since ULA is not intended to be globally
+          routed, it is not harmful to the routing system.</t>
+
+          <t>Such kind of benefit has been utilized in real implementations.
+          For example, in <xref target="RFC6281"/>, the protocol BTMM (Back To
+          My Mac) needs to assign a topology-independent identifier to each
+          client host according to the following considerations:<list
+              style="symbols">
+              <t>TCP connections between two end hosts wish to survive in
+              network changes.</t>
+
+              <t>Sometimes one needs a constant identifier to be associated
+              with a key so that the Security Association can survive the
+              location changes.</t>
+            </list></t>
+
+          <t>It needs to be noticed again that in theory ULA has the
+          possibility of collision. However, the probability is desirably
+          small enough and can be ignored in most cases when ULAs are used as
+          identifiers.</t>
+        </section>
+      </section>
+
+      <section title="IPv4 Co-existence Considerations">
+        <t>Generally, this document does not consider IPv4 to be in scope. But
+        regarding ULA, there is a special case needs to be recognized, which
+        is described in Section 3.2.2 of <xref target="RFC5220"/>. When an
+        enterprise has IPv4 Internet connectivity but does not yet have IPv6
+        Internet connectivity, and the enterprise wants to provide site-local
+        IPv6 connectivity, a ULA is the best choice for site-local IPv6
+        connectivity. Each employee host will have both an IPv4 global or
+        private address and a ULA. Here, when this host tries to connect to an
+        outside node that has registered both A and AAAA records in the DNS,
+        the host will choose AAAA as the destination address and the ULA for
+        the source address according to the IPv6 preference of the default
+        policy table defined in the old address selection standard <xref
+        target="RFC3484"/>. This will clearly result in a connection failure.
+        The new address selection standard <xref target="RFC6724"/> has
+        corrected this behavior by preferring IPv4 than ULAs in the default
+        policy table. However, there are still lots of hosts using the old
+        standard <xref target="RFC3484"/>, thus this could be an issue in real
+        networks.</t>
+
+        <t>Happy Eyeballs <xref target="RFC6555"/> solves this connection
+        failure problem, but unwanted timeouts will obviously lower the user
+        experience. One possible approach to eliminating the timeouts is to
+        deprecate the IPv6 default route and simply configure a scoped route
+        on hosts (in the context of this document, only configure the ULA
+        prefix routes). Another alternative is to configure IPv4 preference on
+        the hosts, and not include DNS A records but only AAAA records for the
+        internal nodes in the internal DNS server. Then outside nodes have
+        both A and AAAA records and can be connected through IPv4 as default
+        and internal nodes can always connect through IPv6. But since IPv6
+        preference is default, changing the default in all nodes is not
+        suitable at scale.</t>
+      </section>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>Security considerations regarding ULAs, in general, please refer to
+      the ULA specification <xref target="RFC4193"/>. Also refer to <xref
+      target="RFC4864"/>, which shows how ULAs help with local network
+      protection.</t>
+
+      <t>As mentioned in <xref target="ULAPA"/>, when using NPTv6, the
+      administrators need to know where the firewall is located to set proper
+      filtering rules.</t>
+
+      <t>Also as mentioned in <xref target="ULAPA"/>, if administrators choose
+      not to do reverse DNS delegation inside their local control of ULA
+      prefixes, a significant amount of information about the ULA population
+      may leak to the outside world.</t>
+    </section>
+
+    <section anchor="IANA" title="IANA Considerations">
+      <t>This memo has no actions for IANA.</t>
+    </section>
+
+    <section anchor="Acknowledgements" title="Acknowledgements">
+      <t>Many valuable comments were received in the IETF v6ops WG mail list,
+      especially from Cameron Byrne, Fred Baker, Brian Carpenter, Lee Howard,
+      Victor Kuarsingh, Alexandru Petrescu, Mikael Abrahamsson, Tim Chown, Jen
+      Linkova, Christopher Palmer Jong-Hyouk Lee, Mark Andrews, Lorenzo
+      Colitti, Ted Lemon, Joel Jaeggli, David Farmer, Doug Barton, Owen
+      Delong, Gert Doering, Bill Jouris, Bill Cerveny, Dave Thaler, Nick
+      Hilliard, Jan Zorz, Randy Bush, Anders Brandt, , Sofiane Imadali and
+      Wesley George.</t>
+
+      <t>Some test of using ULA in the lab was done by our research partner
+      BNRC-BUPT (Broad Network Research Centre in Beijing University of Posts
+      and Telecommunications). Thanks for the work of Prof. Xiangyang Gong and
+      student Dengjia Xu.</t>
+
+      <t>Tom Taylor did a language review and revision throught the whole
+      document. The authors appreciate a lot for his help.</t>
+
+      <t>This document was produced using the xml2rfc tool <xref
+      target="RFC2629"/> (initially prepared using
+      2-Word-v2.0.template.dot.).</t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      <?rfc include='reference.RFC.2119'?>
+
+      <?rfc include='reference.RFC.2629'?>
+
+      <?rfc include='reference.RFC.4193'?>
+    </references>
+
+    <references title="Informative References">
+      <?rfc include='reference.RFC.1918'?>
+
+      <?rfc include='reference.RFC.2993'?>
+
+      <?rfc include='reference.RFC.3027'?>
+
+      <?rfc include='reference.RFC.3484'?>
+
+      <?rfc include='reference.RFC.3879'?>
+
+      <?rfc include='reference.RFC.4191'?>
+
+      <?rfc include='reference.RFC.4192'?>
+
+      <?rfc include='reference.RFC.4864'?>
+
+      <?rfc include='reference.RFC.5220'?>
+
+      <?rfc include='reference.RFC.5902'?>
+
+      <?rfc include='reference.RFC.6052'?>
+
+      <?rfc include='reference.RFC.6281'?>
+
+      <?rfc include='reference.RFC.6296'?>
+
+      <?rfc include='reference.RFC.6555'?>
+
+      <?rfc include='reference.RFC.6724'?>
+
+      <?rfc include='reference.RFC.7084'?>
+
+      <?rfc include='reference.I-D.ietf-v6ops-dhcpv6-slaac-problem'?>
+
+      <?rfc include='reference.I-D.baker-v6ops-b2b-private-routing'?>
+
+      <?rfc include='reference.I-D.petrescu-autoconf-ra-based-routing'?>
+
+      <?rfc include='reference.I-D.jhlee-mext-mnpp'?>
+
+      <reference anchor="RS-485">
+        <front>
+          <title>Electronic Industries Association (1983). Electrical
+          Characteristics of Generators and Receivers for Use in Balanced
+          Multipoint Systems. EIA Standard RS-485.</title>
+
+          <author>
+            <organization/>
+          </author>
+
+          <date/>
+        </front>
+      </reference>
+
+      <reference anchor="MIL-STD-1397">
+        <front>
+          <title>Military Standard, Input/Output Interfaces, Standard Digital
+          Data, Navy Systems (MIL-STD-1397B), 3 March 1989</title>
+
+          <author>
+            <organization/>
+          </author>
+
+          <date/>
+        </front>
+      </reference>
+
+      <reference anchor="SCADA">
+        <front>
+          <title>Boyer, Stuart A. (2010). SCADA Supervisory Control and Data
+          Acquisition. USA: ISA - International Society of Automation.</title>
+
+          <author>
+            <organization/>
+          </author>
+
+          <date/>
+        </front>
+      </reference>
+
+      <reference anchor="ULA-IN-WILD">
+        <front>
+          <title>G. Michaelson,
+          "conference.apnic.net/data/36/apnic-36-ula_1377495768.pdf"</title>
+
+          <author>
+            <organization/>
+          </author>
+
+          <date/>
+        </front>
+      </reference>
+    </references>
+  </back>
+</rfc>
