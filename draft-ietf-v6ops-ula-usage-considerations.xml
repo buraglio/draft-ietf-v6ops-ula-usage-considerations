@@ -10,7 +10,7 @@
 <!-- control the table of contents (ToC) -->
 <?rfc toc="yes"?>
 <!-- generate a ToC -->
-<?rfc tocdepth="4"?>
+<?rfc tocdepth="3"?>
 <!-- the number of levels of subsections in ToC. default: 3 -->
 <!-- control references -->
 <?rfc symrefs="yes"?>
@@ -24,7 +24,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="info" docName="draft-ietf-v6ops-ula-usage-considerations-03"
+<rfc category="info" docName="draft-ietf-v6ops-ula-usage-considerations-02"
      ipr="trust200902">
   <front>
     <title abbrev="ULA Usage">Considerations For Using Unique Local
@@ -491,28 +491,46 @@
 
   <back>
     <references title="Normative References">
-    <!--?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml"?-->
-      &RFC2629;
-      &RFC4193;
+      <?rfc include='reference.RFC.2119'?>
+
+      <?rfc include='reference.RFC.2629'?>
+
+      <?rfc include='reference.RFC.4193'?>
     </references>
 
     <references title="Informative References">
-      &RFC1918;
-      &RFC2993;
-      &RFC3027;
-      &RFC3484;
-      &RFC3879;
-      &RFC4191;
-      &RFC4192;
-      &RFC4864;
-      &RFC5220;
-      &RFC5902;
-      &RFC6052;
-      &RFC6281;
-      &RFC6296;
-      &RFC6555;
-      &RFC6724;
-      &RFC7084;
+      <?rfc include='reference.RFC.1918'?>
+
+      <?rfc include='reference.RFC.2993'?>
+
+      <?rfc include='reference.RFC.3027'?>
+
+      <?rfc include='reference.RFC.3484'?>
+
+      <?rfc include='reference.RFC.3879'?>
+
+      <?rfc include='reference.RFC.4191'?>
+
+      <?rfc include='reference.RFC.4192'?>
+
+      <?rfc include='reference.RFC.4864'?>
+
+      <?rfc include='reference.RFC.5220'?>
+
+      <?rfc include='reference.RFC.5902'?>
+
+      <?rfc include='reference.RFC.6052'?>
+
+      <?rfc include='reference.RFC.6281'?>
+
+      <?rfc include='reference.RFC.6296'?>
+
+      <?rfc include='reference.RFC.6555'?>
+
+      <?rfc include='reference.RFC.6724'?>
+
+      <?rfc include='reference.RFC.7084'?>
+
       <?rfc include='reference.I-D.ietf-v6ops-dhcpv6-slaac-problem'?>
 
       <?rfc include='reference.I-D.baker-v6ops-b2b-private-routing'?>
